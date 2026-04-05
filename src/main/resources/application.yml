@@ -36,3 +36,25 @@ logging:
   level:
     com.autodesk.bim: DEBUG
     org.hibernate.SQL: WARN
+
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      acks: all
+      retries: 3
+      properties:
+        enable.idempotence: true
+    consumer:
+      group-id: bim-parse-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+      properties:
+        spring.json.trusted.packages: "com.autodesk.bim.kafka"
+
+bim:
+  upload:
+    temp-dir: ${BIM_UPLOAD_DIR:/tmp/bim-uploads}
